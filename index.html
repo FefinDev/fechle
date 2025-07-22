@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FechLE - Live Editor</title>
+  <link rel="icon" href="favicon.png" type="image/png" />
+  <style>
+    :root {
+      --bg: #1e1e2f;
+      --panel: #2c2c3b;
+      --text: #eee;
+      --accent: #00bcd4;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      padding: 20px;
+      background: var(--panel);
+      text-align: center;
+      border-bottom: 2px solid var(--accent);
+      animation: fadeIn 1s ease;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      color: #aaa;
+    }
+
+    main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .editors {
+      display: flex;
+      flex-direction: column;
+      width: 50%;
+      background: var(--panel);
+      padding: 10px;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+
+    .editor {
+      margin-bottom: 10px;
+    }
+
+    .editor label {
+      font-weight: bold;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .editor textarea {
+      width: 100%;
+      height: 120px;
+      background: #1a1a27;
+      color: var(--text);
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      resize: vertical;
+      font-family: monospace;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    /* Botón abrir en nueva pestaña */
+    #openNewTab {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      background-color: var(--accent);
+      color: #1e1e2f;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: background-color 0.3s ease;
+    }
+
+    #openNewTab:hover {
+      background-color: #009dbf;
+    }
+
+    .preview {
+      width: 50%;
+      border: none;
+      background: white;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      main {
+        flex-direction: column;
+      }
+      .editors, .preview {
+        width: 100%;
+        height: 50%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>FECH presenta FechLE (Live Editor)</h1>
+    <p>Un editor online simple y bonito para HTML, CSS y JavaScript. ¡Probalo ahora mismo!</p>
+  </header>
+  <main>
+    <div class="editors">
+      <div class="editor">
+        <label for="html">HTML</label>
+        <textarea id="html" placeholder="Escribí tu HTML aquí...">&lt;h1&gt;Hola desde FechLE&lt;/h1&gt;</textarea>
+
+      </div>
+      <div class="editor">
+        <label for="css">CSS</label>
+        <textarea id="css" placeholder="Estilos CSS...">h1 { color: #00bcd4; text-align: center; }</textarea>
+      </div>
+      <div class="editor">
+        <label for="js">JavaScript</label>
+        <textarea id="js" placeholder="Código JS...">console.log("Bienvenido a FechLE!");</textarea>
+      </div>
+
+      <button id="openNewTab">Abrir en nueva pestaña</button>
+    </div>
+    <iframe class="preview" id="preview"></iframe>
+  </main>
+
+  <script>
+    const htmlInput = document.getElementById("html");
+    const cssInput = document.getElementById("css");
+    const jsInput = document.getElementById("js");
+    const previewFrame = document.getElementById("preview");
+
+    function render() {
+      const html = htmlInput.value;
+      const css = `<style>${cssInput.value}</style>`;
+      const js = `<script>${jsInput.value}<\/script>`;
+      previewFrame.srcdoc = `${html}\n${css}\n${js}`;
+    }
+
+    [htmlInput, cssInput, jsInput].forEach(input => {
+      input.addEventListener("input", render);
+    });
+
+    document.getElementById('openNewTab').addEventListener('click', () => {
+      const html = htmlInput.value;
+      const css = `<style>${cssInput.value}</style>`;
+      const js = `<script>${jsInput.value}<\/script>`;
+      const finalContent = `${html}\n${css}\n${js}`;
+
+      const blob = new Blob([finalContent], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+    });
+
+    window.onload = render;
+  </script>
+</body>
+</html>
